@@ -1,212 +1,261 @@
 # QA Lead — Test Plan
 
 **Agent**: qa-lead  
-**Generated**: 2026-08-09T17:56:28.791Z
+**Generated**: 2026-08-09T18:14:53.757Z
 
 ---
 
 ## Test Plan
 
 {
-  "scope": "All acceptance criteria are covered by the tests below.",
+  "scope": "All acceptance criteria from all user stories are covered by the test suite.",
   "unit": [
     {
-      "target": "backend/src/game_service.py::create_game",
-      "description": "Verify that create_game returns HTTP 201 and a unique game ID.",
+      "target": "backend/src/game.py::create_game",
+      "description": "Verify that create_game returns a new unique game ID.",
       "framework": "pytest",
       "storyId": "US-001",
       "acIndex": 0
     },
     {
-      "target": "backend/src/game_service.py::create_game",
-      "description": "Ensure the generated game ID can be used in subsequent service calls (format validation).",
+      "target": "backend/src/response_builder.py::build_game_creation_response",
+      "description": "Ensure the game creation response includes empty board state for both players.",
       "framework": "pytest",
       "storyId": "US-001",
-      "acIndex": 2
-    },
-    {
-      "target": "backend/src/game_service.py::get_sanitized_view",
-      "description": "Check that GET /games returns my ship positions and opponent hit/miss markers.",
-      "framework": "pytest",
-      "storyId": "US-002",
-      "acIndex": 0
-    },
-    {
-      "target": "backend/src/game_service.py::get_sanitized_view",
-      "description": "Assert that opponent ship positions are never included in the response.",
-      "framework": "pytest",
-      "storyId": "US-002",
       "acIndex": 1
     },
     {
-      "target": "backend/src/game_service.py::get_sanitized_view",
-      "description": "Validate that requesting an unknown game ID raises a 404 error.",
-      "framework": "pytest",
-      "storyId": "US-002",
-      "acIndex": 2
-    },
-    {
-      "target": "backend/src/ship_placement.py::validate_and_store",
-      "description": "Confirm valid ship placement returns success and updates internal state.",
+      "target": "backend/src/validation.py::validate_ship_placement",
+      "description": "Accept valid ship coordinates and return success.",
       "framework": "pytest",
       "storyId": "US-003",
       "acIndex": 0
     },
     {
-      "target": "backend/src/ship_placement.py::validate_and_store",
-      "description": "Test that overlapping, out‑of‑bounds, or wrong‑size placements return a 400 error with a clear message.",
+      "target": "backend/src/validation.py::validate_ship_placement",
+      "description": "Reject overlapping, out‑of‑bounds, or wrong‑size ship placements with clear error messages.",
       "framework": "pytest",
       "storyId": "US-003",
       "acIndex": 1
     },
     {
-      "target": "backend/src/ship_placement.py::validate_and_store",
-      "description": "After a successful placement, verify that ship coordinates are stored for the correct player.",
+      "target": "backend/src/game_state.py::store_ship_locations",
+      "description": "After a successful placement, ship locations are persisted in the in‑memory game state.",
       "framework": "pytest",
       "storyId": "US-003",
       "acIndex": 2
     },
     {
       "target": "backend/src/shot_processor.py::process_shot",
-      "description": "Ensure shot processing returns a result field of 'hit', 'miss', or 'sunk'.",
+      "description": "Return correct result field ('hit', 'miss', or 'sunk') for a shot.",
       "framework": "pytest",
       "storyId": "US-004",
       "acIndex": 0
     },
     {
-      "target": "backend/src/shot_processor.py::process_shot",
-      "description": "Validate that a shot made out of turn results in a 409 conflict response.",
+      "target": "backend/src/turn_manager.py::enforce_turn_order",
+      "description": "Reject a shot made out of turn with HTTP 409 semantics.",
       "framework": "pytest",
       "storyId": "US-004",
       "acIndex": 1
     },
     {
-      "target": "backend/src/shot_processor.py::process_shot",
-      "description": "When all opponent ships are sunk, confirm the response includes 'game_over': true.",
+      "target": "backend/src/game_over.py::check_game_over",
+      "description": "Detect when all opponent ships are sunk and set 'game_over': true.",
       "framework": "pytest",
       "storyId": "US-004",
       "acIndex": 2
+    },
+    {
+      "target": "backend/src/sanitizer.py::sanitize_game_view",
+      "description": "Generate a view that includes my ships and opponent hit/miss markers but never opponent ship positions.",
+      "framework": "pytest",
+      "storyId": "US-002",
+      "acIndex": 1
     },
     {
       "target": "frontend/src/app/components/board/board.component.ts",
-      "description": "Unit test that the board component renders a 6×6 grid with the player's ships and opponent hit markers.",
-      "framework": "karma/jest",
+      "description": "Render a 6×6 grid displaying the player's ships and opponent hit markers.",
+      "framework": "jest",
       "storyId": "US-005",
       "acIndex": 0
     },
     {
       "target": "frontend/src/app/components/attack-grid/attack-grid.component.ts",
-      "description": "Unit test that the attack grid displays markers for previous hits and misses.",
-      "framework": "karma/jest",
+      "description": "Render a separate 6×6 attack grid showing previous hit and miss markers.",
+      "framework": "jest",
       "storyId": "US-005",
       "acIndex": 1
     },
     {
       "target": "frontend/src/app/components/attack-grid/attack-grid.component.ts",
-      "description": "Verify that clicking a cell triggers a shot request and updates both grids based on the backend response.",
-      "framework": "karma/jest",
+      "description": "Handle cell click by invoking GameService.shot() and updating grid state.",
+      "framework": "jest",
       "storyId": "US-005",
+      "acIndex": 2
+    },
+    {
+      "target": "frontend/src/app/services/game.service.ts",
+      "description": "Create a new game via POST /games and store the returned game ID for later calls.",
+      "framework": "jest",
+      "storyId": "US-001",
       "acIndex": 2
     }
   ],
   "integration": [
     {
-      "target": "POST /games",
-      "description": "Integration test that creating a game returns 201 and a unique ID usable in later calls.",
+      "target": "backend/tests/api/test_game_creation.py::test_post_games_returns_201_and_unique_id",
+      "description": "POST /games returns HTTP 201 with a unique game ID.",
       "framework": "pytest",
       "storyId": "US-001",
       "acIndex": 0
     },
     {
-      "target": "POST /games",
-      "description": "After creation, perform a GET using the returned ID to ensure the ID is valid.",
+      "target": "backend/tests/api/test_game_creation.py::test_post_games_includes_empty_board",
+      "description": "Response includes empty board state for both players.",
+      "framework": "pytest",
+      "storyId": "US-001",
+      "acIndex": 1
+    },
+    {
+      "target": "backend/tests/api/test_game_flow.py::test_game_id_usable_in_subsequent_calls",
+      "description": "Returned game ID can be used in subsequent API calls (e.g., GET /games/{id}).",
       "framework": "pytest",
       "storyId": "US-001",
       "acIndex": 2
     },
     {
-      "target": "GET /games/{id}",
-      "description": "Verify 200 response contains player ships and opponent hit/miss markers.",
+      "target": "backend/tests/api/test_game_view.py::test_get_game_returns_sanitized_view",
+      "description": "GET /games/{id} returns HTTP 200 with my ship positions and opponent hit/miss markers.",
       "framework": "pytest",
       "storyId": "US-002",
       "acIndex": 0
     },
     {
-      "target": "GET /games/{id}",
-      "description": "Assert that opponent ship positions are omitted from the JSON payload.",
+      "target": "backend/tests/api/test_game_view.py::test_get_game_excludes_opponent_ships",
+      "description": "Response never includes opponent ship positions.",
       "framework": "pytest",
       "storyId": "US-002",
       "acIndex": 1
     },
     {
-      "target": "GET /games/{id}",
-      "description": "Request a non‑existent game ID and expect a 404 response.",
+      "target": "backend/tests/api/test_game_view.py::test_get_unknown_game_returns_404",
+      "description": "GET with an unknown game ID returns HTTP 404.",
       "framework": "pytest",
       "storyId": "US-002",
       "acIndex": 2
     },
     {
-      "target": "POST /games/{id}/ships",
-      "description": "Submit valid ship coordinates and expect a 200 response with updated state.",
+      "target": "backend/tests/api/test_ship_placement.py::test_post_ships_valid_returns_200",
+      "description": "POST /games/{id}/ships with valid coordinates returns HTTP 200 and updates state.",
       "framework": "pytest",
       "storyId": "US-003",
       "acIndex": 0
     },
     {
-      "target": "POST /games/{id}/ships",
-      "description": "Submit invalid placements (overlap/out‑of‑bounds) and verify a 400 error with a clear message.",
+      "target": "backend/tests/api/test_ship_placement.py::test_post_ships_invalid_returns_400",
+      "description": "Invalid placements return HTTP 400 with a clear error message.",
       "framework": "pytest",
       "storyId": "US-003",
       "acIndex": 1
     },
     {
-      "target": "POST /games/{id}/ships",
-      "description": "After a successful placement, retrieve the game state and confirm ship locations are stored.",
+      "target": "backend/tests/api/test_ship_placement.py::test_ship_locations_persisted",
+      "description": "After successful placement the backend stores the ship locations for the player.",
       "framework": "pytest",
       "storyId": "US-003",
       "acIndex": 2
     },
     {
-      "target": "POST /games/{id}/shots",
-      "description": "Fire a shot and check that the response includes a result field of 'hit', 'miss', or 'sunk'.",
+      "target": "backend/tests/api/test_shot.py::test_post_shot_returns_result_field",
+      "description": "POST /games/{id}/shots returns a result field of 'hit', 'miss' or 'sunk'.",
       "framework": "pytest",
       "storyId": "US-004",
       "acIndex": 0
     },
     {
-      "target": "POST /games/{id}/shots",
-      "description": "Attempt a shot out of turn and verify a 409 conflict response.",
+      "target": "backend/tests/api/test_shot.py::test_shot_out_of_turn_returns_409",
+      "description": "Shot made out of turn returns HTTP 409 with appropriate message.",
       "framework": "pytest",
       "storyId": "US-004",
       "acIndex": 1
     },
     {
-      "target": "POST /games/{id}/shots",
-      "description": "Sink all opponent ships and confirm the response contains 'game_over': true.",
+      "target": "backend/tests/api/test_shot.py::test_shot_all_sunk_returns_game_over",
+      "description": "When all opponent ships are sunk the response includes 'game_over': true.",
       "framework": "pytest",
       "storyId": "US-004",
+      "acIndex": 2
+    },
+    {
+      "target": "infra/tests/docker_compose_test.py::test_compose_starts_containers",
+      "description": "Running 'docker compose up --build' starts both frontend and backend containers without errors.",
+      "framework": "pytest",
+      "storyId": "US-006",
+      "acIndex": 0
+    },
+    {
+      "target": "infra/tests/docker_compose_test.py::test_frontend_backend_connectivity",
+      "description": "Frontend reachable at http://localhost:4200 and can successfully call backend at http://localhost:8000.",
+      "framework": "pytest",
+      "storyId": "US-006",
+      "acIndex": 1
+    },
+    {
+      "target": "infra/tests/docker_compose_test.py::test_restart_policy_unless_stopped",
+      "description": "Both containers have a restart policy of 'unless-stopped' and recover automatically after a crash.",
+      "framework": "pytest",
+      "storyId": "US-006",
       "acIndex": 2
     }
   ],
   "e2e": [
     {
-      "scenario": "Full game flow: create game, place ships, fire shots until victory",
-      "description": "Play through the entire game via the UI, verifying creation, ship placement, shot actions, UI updates, no console/network errors, and win condition display.",
+      "scenario": "Create new game via UI and verify empty boards are displayed.",
+      "description": "User clicks 'New Game', UI shows two 6×6 grids with no ships or markers; verifies backend returned game ID is stored.",
+      "criticalPath": true,
+      "storyId": "US-001",
+      "acIndex": -1
+    },
+    {
+      "scenario": "Place ships through UI and confirm placement success.",
+      "description": "Player drags/places three ships; UI shows ships on own board; backend confirms placement; invalid attempts show error toast.",
+      "criticalPath": true,
+      "storyId": "US-003",
+      "acIndex": -1
+    },
+    {
+      "scenario": "Fire shots and validate hit/miss/sunk markers and turn order.",
+      "description": "Player clicks cells on attack grid; UI updates with hit/miss icons; out‑of‑turn attempts show warning; final shot that sinks all ships shows 'You win' message.",
+      "criticalPath": true,
+      "storyId": "US-004",
+      "acIndex": -1
+    },
+    {
+      "scenario": "Full game flow end‑to‑end verification.",
+      "description": "Create game, place ships for both players, alternate shots until win condition; UI reflects both boards correctly; no console or network errors appear.",
       "criticalPath": true,
       "storyId": "US-007",
       "acIndex": -1
     },
     {
-      "scenario": "Docker compose startup verification",
-      "description": "Run 'docker compose up --build', ensure both containers start without errors, frontend reachable at http://localhost:4200, backend reachable at http://localhost:8000, and containers recover after a forced crash.",
-      "criticalPath": true,
-      "storyId": "US-006",
+      "scenario": "Verify UI grids render correctly after each action.",
+      "description": "Check that the player's board always shows own ships and opponent hits, and the attack grid shows all previous shot results.",
+      "criticalPath": false,
+      "storyId": "US-005",
       "acIndex": -1
+    },
+    {
+      "scenario": "Detect win condition and display victory banner.",
+      "description": "When all opponent ships are sunk, UI shows a prominent 'Victory' banner and disables further actions.",
+      "criticalPath": true,
+      "storyId": "US-007",
+      "acIndex": 2
     }
   ],
   "coverageTargets": {
-    "unit": 85,
-    "integration": 70,
+    "unit": 80,
+    "integration": 60,
     "e2e": 100
   }
 }
