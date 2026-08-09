@@ -1,36 +1,15 @@
-"""FastAPI application entry point.
+"""Main application entry point for the Battleship API.
 
-Provides a minimal API with a health check endpoint and CORS configuration
-required for the Angular frontend.
+Provides a minimal FastAPI app with a health check endpoint.
+The stub FastAPI implementation in this repository supplies only the
+features required for the test suite.
 """
 
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 
-# Allowed origins – Angular dev server
-ALLOWED_ORIGINS = ["http://localhost:4200"]
-
-app = FastAPI(title="Battleship API", version="0.1.0")
-
-# Configure CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+app = FastAPI()
 
 @app.get("/health")
-async def health() -> dict:
-    """Simple health‑check endpoint used by tests and orchestration.
-
-    Returns a JSON payload indicating the service is up.
-    """
+def health() -> dict:
+    """Health check endpoint returning a simple status payload."""
     return {"status": "ok"}
-
-# Uvicorn entry point – useful when running `python main.py`
-if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run(app, host="0.0.0.0", port=8000)
