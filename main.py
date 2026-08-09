@@ -10,6 +10,17 @@ from fastapi.middleware.cors import CORSMiddleware
 # Allowed origins – Angular dev server
 ALLOWED_ORIGINS = ["http://localhost:4200"]
 
+import logging
+import sys
+
+# Configure stdout logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[logging.StreamHandler(stream=sys.stdout)],
+)
+logger = logging.getLogger(__name__)
+
 app = FastAPI(title="Battleship API", version="0.1.0")
 
 # Configure CORS middleware
