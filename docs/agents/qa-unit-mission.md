@@ -1,7 +1,7 @@
 # QA Unit — Test Report
 
 **Agent**: qa-unit  
-**Generated**: 2026-08-09T17:09:21.517Z
+**Generated**: 2026-08-09T17:46:02.206Z
 
 ---
 
@@ -16,6 +16,6 @@
   "skipped": 0,
   "status": "pass",
   "failures": [],
-  "agentId": "agent-001",
+  "agentId": "qa-unit",
   "cases": []
 }
