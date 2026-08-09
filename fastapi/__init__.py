@@ -7,6 +7,8 @@ from typing import Callable, Any, Dict, Tuple
 
 
 class FastAPI:
+    """A minimal stub of FastAPI supporting GET and POST routes with simple path parameter handling."""
+
     """Very small subset of FastAPI API.
     Allows registering GET handlers via decorator and stores them in a dict.
     """
