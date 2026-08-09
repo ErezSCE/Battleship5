@@ -3,7 +3,7 @@ Provides FastAPI class with route registration for GET requests and a simple Tes
 Only implements features required by the current test suite.
 """
 
-from typing import Callable, Any, Dict, Tuple
+from typing import Callable, Any, Dict, Tuple  # typing is optional for Python2
 
 
 class FastAPI:
