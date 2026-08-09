@@ -33,7 +33,7 @@ app.add_middleware(
 )
 
 @app.get("/health")
-async def health() -> dict:
+def health() -> dict:
     """Simple health‑check endpoint used by tests and orchestration.
 
     Returns a JSON payload indicating the service is up.
